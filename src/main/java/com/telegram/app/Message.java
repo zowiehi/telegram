@@ -1,3 +1,5 @@
+package com.telegram.app;
+
 public class Message{
 
   String originalSender;
