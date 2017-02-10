@@ -6,12 +6,12 @@ public class Message{
   Node courier;
   String messageContent;
 
-  private void setMessage(String){
-
+  private void setMessage(String msg){
+    return;
   }
 
   private String readMessage(){
-
+    return "";
   }
 
 }

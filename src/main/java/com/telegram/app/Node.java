@@ -6,18 +6,17 @@ import java.io.*;
 public class Node implements Runnable{
 
   private ServerSocket  serve;
-  private Socket        sock;
   private Thread        thread;
   private String        name;
-  private NodeThread    connections[];
-  private int           connectionCount;
+  private NodeThread    connections[] = new NodeThread[20];
+  private int           connectionCount = 0;
 
 
   public Node(int port){
     try {
       serve = new ServerSocket(port);
       start();
-      System.out.println("Node started: " + serve)
+      System.out.println("Node started: " + serve);
     }
     catch(IOException ioe)
       {  System.out.println(ioe.getMessage());
@@ -25,25 +24,52 @@ public class Node implements Runnable{
   }
 
   public void run(){
-    while(thread){
-      socket = serve.accept();;
-      connections[connectionCount] = new NodeThread(this, socket);
+    while(thread != null){
+      try {
+      Socket socket = serve.accept();
+      newThread(socket);
+      }
+      catch(IOException ioe)
+        {  System.out.println(ioe.getMessage());
+        }
+
     }
+    return;
   }
 
   public void start(){
-    if(!thread){
+    if(thread == null){
       thread = new Thread(this);
-      thread.start()
+      thread.start();
     }
   }
 
-  private boolean connect(Node node){
-    // creates a connection to another node
+  public void connect(String addr, int port){
+    try{
+      Socket sock = new Socket(addr, port);
+    }
+    catch(UnknownHostException uhe){
+      System.out.println(uhe.getMessage());
+    }
+    catch(IOException ioe)
+      {  System.out.println(ioe.getMessage());
+      }
+    return;
+
   }
 
-  private Message receiveMessage(){
-    // receives messages from other nodes
+  public void newThread(Socket socket){
+    connections[connectionCount] = new NodeThread(this, socket);
+    connectionCount++;
+  }
+
+
+  private boolean connect(Node node){
+    return true;
+  }
+
+  private void receiveMessage(){/*return value should be Message, just void to pass the linters*/
+    return;
   }
 
   private void sendMessage(){
