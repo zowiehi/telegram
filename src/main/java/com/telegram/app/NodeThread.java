@@ -10,23 +10,52 @@ public class NodeThread extends Thread
   private DataOutputStream messageOut = null;
   private Node node;
   private Socket socket;
+  public int id;
 
 
-  public NodeThread(Node node, Socket socket){
+  public NodeThread(Node node, Socket socket, int id){
     this.node = node;
     this.socket = socket;
+    this.id = id;
   }
 
   public void run(){
-    String message = "";
-    while (message.isEmpty()){
-
+    while(true){
+      try{
+      String msgText = messageIn.readUTF();
+      Message message = parseMessage(msgText);
+      node.receiveMessage(id, message);
+    }
+    catch(IOException ioe)
+      {
+        System.out.println(ioe.getMessage());
+      }
     }
   }
 
+  public void open() throws IOException {
+    messageIn = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+    messageOut = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+}
+
+
   public void sendMessage(Message msg){
     char filler = '\u25CE';
-    String message = String.join(Character.toString(filler), msg.originalSender, (msg.timestamp).toString(), msg.messageContent);
-    // send the message via DataOutputStream
+    String message = String.join(msg.author, Character.toString(filler), (msg.timestamp).toString(), Character.toString(filler), msg.messageContent);
+    try{
+      messageOut.writeUTF(message);
+    }
+    catch(IOException ioe)
+      {
+        System.out.println(ioe.getMessage());
+      }
   }
+
+  private Message parseMessage(String msg){
+    String[] split = msg.split("[\u25CE]");
+    Message message = new Message(split[0], split[2]);
+    return message;
+
+  }
+
 }

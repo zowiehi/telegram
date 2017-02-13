@@ -15,6 +15,7 @@ public class Node implements Runnable{
 
 
   public Node(int port){
+    this.name = "Nick";
     try {
       serve = new ServerSocket(port);
       start();
@@ -61,20 +62,30 @@ public class Node implements Runnable{
   }
 
   public void newThread(Socket socket){
-    connections[connectionCount] = new NodeThread(this, socket);
+    connections[connectionCount] = new NodeThread(this, socket, connectionCount);
+    try{
+      connections[connectionCount].open();
+      connections[connectionCount].run();
+    }
+    catch(IOException ioe)
+      {
+        System.out.println(ioe.getMessage());
+      }
     connectionCount++;
   }
 
-  private void receiveMessage(){/*return value should be Message, just void to pass the linters*/
+  public void receiveMessage(int id, Message message){
+    System.out.println( message.timestamp + " :  " + message.author + ":  " + message.messageContent);
     return;
   }
 
   public void generateMessage(String input){
-
-  }
-
-  private void sendMessage(Message message){
-      String output = name + "\u25CE" + message;
+      Message newMessage = new Message(name, input);
+      int i = 0;
+      while(i <= connectionCount){
+        connections[i].sendMessage(newMessage);
+      }
+      return;
   }
 
   private void leave(){
