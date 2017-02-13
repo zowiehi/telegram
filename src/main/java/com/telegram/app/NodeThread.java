@@ -42,7 +42,6 @@ public class NodeThread extends Thread
   public void sendMessage(Message msg){
     char filler = '\u25CE';
     String message = String.join(msg.author, Character.toString(filler), (msg.timestamp).toString(), Character.toString(filler), msg.messageContent);
-
     try{
       messageOut.writeUTF(message);
     }
