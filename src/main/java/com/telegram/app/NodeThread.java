@@ -24,7 +24,9 @@ public class NodeThread extends Thread
   }
 
   public void sendMessage(Message msg){
-    String message = msg.originalSender + ''
+    String filler = '\u25CE';
+    String message = msg.originalSender + filler + (msg.timestamp).toString() + filler + msg.messageContent;
+    // send the message via DataOutputStream
   }
 
 }
