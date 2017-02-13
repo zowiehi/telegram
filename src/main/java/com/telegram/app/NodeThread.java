@@ -19,14 +19,14 @@ public class NodeThread extends Thread
 
   public void run(){
     String message = "";
-    while (message.isempty()){
+    while (message.isEmpty()){
 
     }
   }
 
   public void sendMessage(Message msg){
-    String filler = '\u25CE';
-    String message = msg.originalSender + filler + (msg.timestamp).toString() + filler + msg.messageContent;
+    char filler = '\u25CE';
+    String message = String.join(Character.toString(filler), msg.originalSender, (msg.timestamp).toString(), msg.messageContent);
     // send the message via DataOutputStream
   }
 }
