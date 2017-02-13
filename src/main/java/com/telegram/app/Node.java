@@ -52,7 +52,8 @@ public class Node implements Runnable{
       System.out.println(uhe.getMessage());
     }
     catch(IOException ioe)
-      {  System.out.println(ioe.getMessage());
+      {
+        System.out.println(ioe.getMessage());
       }
     return;
 
@@ -61,11 +62,6 @@ public class Node implements Runnable{
   public void newThread(Socket socket){
     connections[connectionCount] = new NodeThread(this, socket);
     connectionCount++;
-  }
-
-
-  private boolean connect(Node node){
-    return true;
   }
 
   private void receiveMessage(){/*return value should be Message, just void to pass the linters*/
