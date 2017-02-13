@@ -3,3 +3,8 @@ jdk:
   - oraclejdk8
 script:
   - mvn test -B
+
+notifications:
+  webhooks: https://webhooks.gitter.im/e/82b04d6d9cef766f70b2
+
+  email: false
