@@ -8,8 +8,8 @@ public class Message{
   public String   messageContent;
   public Date     timestamp;
 
-  public void Message(String originalSender, String message){
-    this.originalSender = originalSender;
+  public void Message(String author, String message){
+    this.author = author;
     this.messageContent = message;
     this.timestamp = new Date();
   }

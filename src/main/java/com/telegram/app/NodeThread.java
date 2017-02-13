@@ -11,12 +11,13 @@ public class NodeThread extends Thread
   private Node node;
   private Socket socket;
 
+
   public NodeThread(Node node, Socket socket){
     this.node = node;
     this.socket = socket;
   }
 
-  public run(){
+  public void run(){
     String message = "";
     while (message.isempty()){
 
@@ -28,5 +29,4 @@ public class NodeThread extends Thread
     String message = msg.originalSender + filler + (msg.timestamp).toString() + filler + msg.messageContent;
     // send the message via DataOutputStream
   }
-
 }

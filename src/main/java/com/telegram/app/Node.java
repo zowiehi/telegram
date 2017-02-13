@@ -9,6 +9,8 @@ public class Node implements Runnable{
   private Thread        thread;
   private String        name;
   private NodeThread    connections[] = new NodeThread[20];
+  private DataInputStream  messageIn  =  null;
+  private DataOutputStream messageOut = null;
   private int           connectionCount = 0;
 
 
@@ -32,7 +34,6 @@ public class Node implements Runnable{
       catch(IOException ioe)
         {  System.out.println(ioe.getMessage());
         }
-
     }
     return;
   }
@@ -68,8 +69,12 @@ public class Node implements Runnable{
     return;
   }
 
-  private void sendMessage(){
-    // create and send a message to connected nodes
+  public generateMessage(String input){
+
+  }
+
+  private void sendMessage(Message message){
+      String output = name + "\u25CE" + message;
   }
 
   private void leave(){
