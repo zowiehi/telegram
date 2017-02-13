@@ -1,17 +1,17 @@
 package com.telegram.app;
 
+import java.util.*;
+
 public class Message{
 
-  String originalSender;
-  Node courier;
-  String messageContent;
+  public String   originalSender;
+  public String   messageContent;
+  public Date     timestamp;
 
-  private void setMessage(String msg){
-    return;
-  }
-
-  private String readMessage(){
-    return "";
+  public void Message(String originalSender, String message){
+    this.originalSender = originalSender;
+    this.messageContent = message;
+    this.timestamp = new Date();
   }
 
 }
