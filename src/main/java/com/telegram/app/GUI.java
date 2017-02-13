@@ -49,7 +49,7 @@ public class GUI implements ActionListener {
     public void actionPerformed(ActionEvent e) {
       switch (e.getActionCommand()) {
         case "Send":
-          this.node.sendMessage(field.getText());
+          this.node.generateMessage(field.getText());
           break;
         case "Connect":
           this.node.connect(ipField.getText(),

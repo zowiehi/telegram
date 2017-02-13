@@ -7,6 +7,7 @@ public class Message{
   public String   originalSender;
   public String   messageContent;
   public Date     timestamp;
+  public String   author;
 
   public void Message(String author, String message){
     this.author = author;

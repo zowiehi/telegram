@@ -69,7 +69,7 @@ public class Node implements Runnable{
     return;
   }
 
-  public generateMessage(String input){
+  public void generateMessage(String input){
 
   }
 
