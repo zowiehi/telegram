@@ -1,3 +1,9 @@
 .DS_Store
 target/
 *.class
+
+# Eclipse nonsense because of using the GUI builder
+.classpath
+.project
+
+jgoodies-*
