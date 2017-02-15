@@ -74,6 +74,8 @@ public class GUI implements ActionListener {
         frame.setTitle("telegram");
         frame.setSize(800, 600);
         frame.setVisible(true);
+
+        this.node.run();
     }
 
     // process the button clicks

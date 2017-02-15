@@ -17,6 +17,7 @@ public class NodeThread extends Thread
     this.node = node;
     this.socket = socket;
     this.id = id;
+    System.out.println("Thread started");
   }
 
   public void run(){
