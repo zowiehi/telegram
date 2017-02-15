@@ -19,7 +19,6 @@ public class Node implements Runnable{
     try {
       serve = new ServerSocket(port);
       start();
-      System.out.println("Node started: " + serve);
     }
     catch(IOException ioe)
       {  System.out.println(ioe.getMessage());
@@ -43,12 +42,14 @@ public class Node implements Runnable{
     if(thread == null){
       thread = new Thread(this);
       thread.start();
+      System.out.println("Node started: " + serve);
     }
   }
 
   public void connect(String addr, int port){
     try{
-      Socket sock = new Socket(addr, port);
+      Socket socket = new Socket(addr, port);
+      newThread(socket);
     }
     catch(UnknownHostException uhe){
       System.out.println(uhe.getMessage());
@@ -72,6 +73,8 @@ public class Node implements Runnable{
         System.out.println(ioe.getMessage());
       }
     connectionCount++;
+    System.out.println("Node started: " + serve);
+    return;
   }
 
   public void receiveMessage(int id, Message message){
@@ -81,6 +84,7 @@ public class Node implements Runnable{
 
   public void generateMessage(String input){
       Message newMessage = new Message(name, input);
+      System.out.println( newMessage.timestamp + " :  " + newMessage.author + ":  " + newMessage.messageContent);
       int i = 0;
       while(i <= connectionCount){
         connections[i].sendMessage(newMessage);
