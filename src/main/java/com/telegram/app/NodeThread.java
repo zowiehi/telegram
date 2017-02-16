@@ -24,7 +24,7 @@ public class NodeThread extends Thread {
       try {
         String msgText = messageIn.readUTF();
         Message message = parseMessage(msgText);
-        node.receiveMessage(id, message);
+        this.node.receiveMessage(id, message);
       } catch (IOException ioe) {
         System.out.println(ioe.getMessage());
       }
@@ -32,8 +32,8 @@ public class NodeThread extends Thread {
   }
 
   public void open() throws IOException {
-    messageIn = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-    messageOut = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+    this.messageIn = new DataInputStream(new BufferedInputStream(this.socket.getInputStream()));
+    this.messageOut = new DataOutputStream(new BufferedOutputStream(this.socket.getOutputStream()));
   }
 
 
@@ -41,8 +41,8 @@ public class NodeThread extends Thread {
     char filler = '\u25CE';
     String message = String.join(Character.toString(filler), msg.author, (msg.timestamp).toString(), Character.toString(filler), msg.messageContent);
     try {
-      messageOut.writeUTF(message);
-    } catch(IOException ioe) {
+      this.messageOut.writeUTF(message);
+    } catch (IOException ioe) {
       System.out.println(ioe.getMessage());
     }
   }

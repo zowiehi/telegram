@@ -17,26 +17,26 @@ public class Node implements Runnable {
   public Node(int port) {
     this.name = "Nick";
     try {
-      serve = new ServerSocket(port);
+      this.serve = new ServerSocket(port);
       start();
-    } catch(IOException ioe) {
+    } catch (IOException ioe) {
       System.out.println(ioe.getMessage());
     }
   }
 
   public void run() {
-    while(thread != null) {
+    while (thread != null) {
       try {
         Socket socket = serve.accept();
         newThread(socket);
-      } catch(IOException ioe) {
+      } catch (IOException ioe) {
         System.out.println(ioe.getMessage());
       }
     }
   }
 
   public void start() {
-    if(thread == null) {
+    if (thread == null) {
       thread = new Thread(this);
       thread.start();
       System.out.println("Node started: " + serve);
@@ -47,26 +47,27 @@ public class Node implements Runnable {
     try {
       Socket socket = new Socket(addr, port);
       newThread(socket);
-    } catch(UnknownHostException uhe) {
+    } catch (UnknownHostException uhe) {
       System.out.println(uhe.getMessage());
-    } catch(IOException ioe) {
-        System.out.println(ioe.getMessage());
+    } catch (IOException ioe) {
+      System.out.println(ioe.getMessage());
     }
+    System.out.println("Connected to " + addr + ":"+ port);
   }
 
   public void newThread(Socket socket) {
     connections[connectionCount] = new NodeThread(this, socket, connectionCount);
     try {
       connections[connectionCount].open();
-      connections[connectionCount].run();
+      connections[connectionCount].start();
+      connectionCount++;
     } catch (IOException ioe) {
-        System.out.println(ioe.getMessage());
+      System.out.println(ioe.getMessage());
     }
-    connectionCount++;
     System.out.println("Node started: " + serve);
   }
 
-  public void receiveMessage(int id, Message message){
+  public void receiveMessage(int id, Message message) {
     System.out.println(message.timestamp + " :  " + message.author + ":  " + message.messageContent);
   }
 
@@ -74,8 +75,8 @@ public class Node implements Runnable {
     Message newMessage = new Message(name, input);
     System.out.println(newMessage.timestamp + " :  " + newMessage.author + ":  " + newMessage.messageContent);
     int i = 0;
-    while (i <= connectionCount) {
-      connections[i].sendMessage(newMessage);
+    while (i < connectionCount) {
+      connections[i++].sendMessage(newMessage);
     }
   }
 

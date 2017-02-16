@@ -68,6 +68,7 @@ public class GUI implements ActionListener {
 
     JButton btnSend = new JButton("Send");
     btnSend.setBounds(623, 533, 171, 39);
+    btnSend.addActionListener(this);
     panel.add(btnSend);
 
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -88,8 +89,6 @@ public class GUI implements ActionListener {
         this.node.connect(ipField.getText(),
                           Integer.parseInt(portField.getText()));
         break;
-      default:
-        return;
     }
   }
 
