@@ -3,96 +3,83 @@ package com.telegram.app;
 import java.net.*;
 import java.io.*;
 
-public class Node implements Runnable{
+public class Node implements Runnable {
 
-  private ServerSocket  serve;
-  private Thread        thread;
-  private String        name;
-  private NodeThread    connections[] = new NodeThread[20];
-  private DataInputStream  messageIn  =  null;
-  private DataOutputStream messageOut = null;
-  private int           connectionCount = 0;
+  private ServerSocket      serve;
+  private Thread            thread;
+  private String            name;
+  private NodeThread        connections[] = new NodeThread[20];
+  private DataInputStream   messageIn  =  null;
+  private DataOutputStream  messageOut = null;
+  private int               connectionCount = 0;
 
 
-  public Node(int port){
+  public Node(int port) {
     this.name = "Nick";
     try {
       serve = new ServerSocket(port);
       start();
+    } catch(IOException ioe) {
+      System.out.println(ioe.getMessage());
     }
-    catch(IOException ioe)
-      {  System.out.println(ioe.getMessage());
-      }
   }
 
-  public void run(){
-    while(thread != null){
+  public void run() {
+    while(thread != null) {
       try {
-      Socket socket = serve.accept();
-      newThread(socket);
+        Socket socket = serve.accept();
+        newThread(socket);
+      } catch(IOException ioe) {
+        System.out.println(ioe.getMessage());
       }
-      catch(IOException ioe)
-        {  System.out.println(ioe.getMessage());
-        }
     }
-    return;
   }
 
-  public void start(){
-    if(thread == null){
+  public void start() {
+    if(thread == null) {
       thread = new Thread(this);
       thread.start();
       System.out.println("Node started: " + serve);
     }
   }
 
-  public void connect(String addr, int port){
-    try{
+  public void connect(String addr, int port) {
+    try {
       Socket socket = new Socket(addr, port);
       newThread(socket);
-    }
-    catch(UnknownHostException uhe){
+    } catch(UnknownHostException uhe) {
       System.out.println(uhe.getMessage());
-    }
-    catch(IOException ioe)
-      {
+    } catch(IOException ioe) {
         System.out.println(ioe.getMessage());
-      }
-    return;
-
+    }
   }
 
-  public void newThread(Socket socket){
+  public void newThread(Socket socket) {
     connections[connectionCount] = new NodeThread(this, socket, connectionCount);
-    try{
+    try {
       connections[connectionCount].open();
       connections[connectionCount].run();
-    }
-    catch(IOException ioe)
-      {
+    } catch (IOException ioe) {
         System.out.println(ioe.getMessage());
-      }
+    }
     connectionCount++;
     System.out.println("Node started: " + serve);
-    return;
   }
 
   public void receiveMessage(int id, Message message){
-    System.out.println( message.timestamp + " :  " + message.author + ":  " + message.messageContent);
-    return;
+    System.out.println(message.timestamp + " :  " + message.author + ":  " + message.messageContent);
   }
 
-  public void generateMessage(String input){
-      Message newMessage = new Message(name, input);
-      System.out.println( newMessage.timestamp + " :  " + newMessage.author + ":  " + newMessage.messageContent);
-      int i = 0;
-      while(i <= connectionCount){
-        connections[i].sendMessage(newMessage);
-      }
-      return;
+  public void generateMessage(String input) {
+    Message newMessage = new Message(name, input);
+    System.out.println(newMessage.timestamp + " :  " + newMessage.author + ":  " + newMessage.messageContent);
+    int i = 0;
+    while (i <= connectionCount) {
+      connections[i].sendMessage(newMessage);
+    }
   }
 
-  private void leave(){
+  private void leave() {
     // leaves the chat network
   }
 
