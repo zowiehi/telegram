@@ -8,7 +8,7 @@ public class Message{
   public String   messageContent;
   public Date     timestamp;
 
-  public Message(String author, String message){
+  public Message(String author, String message) {
     this.author = author;
     this.messageContent = message;
     this.timestamp = new Date();
