@@ -32,14 +32,14 @@ public class NodeThread extends Thread {
   }
 
   public void open() throws IOException {
-    this.messageIn = new DataInputStream(new BufferedInputStream(this.socket.getInputStream()));
-    this.messageOut = new DataOutputStream(new BufferedOutputStream(this.socket.getOutputStream()));
+    this.messageIn = new DataInputStream(this.socket.getInputStream());
+    this.messageOut = new DataOutputStream(this.socket.getOutputStream());
   }
 
 
   public void sendMessage(Message msg) {
     char filler = '\u25CE';
-    String message = String.join(Character.toString(filler), msg.author, (msg.timestamp).toString(), Character.toString(filler), msg.messageContent);
+    String message = String.join(Character.toString(filler), msg.author, (msg.timestamp).toString(), msg.messageContent);
     try {
       this.messageOut.writeUTF(message);
     } catch (IOException ioe) {
