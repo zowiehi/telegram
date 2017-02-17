@@ -1,16 +1,7 @@
-/**
-* Domain classes used to produce .....
-* <p>
-* These classes contain the ......
-* </p>
-*
-* @since 1.0
-* @author somebody
-* @version 1.0
-*/
 package com.telegram.app;
 
 import javax.swing.*;
+import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -19,7 +10,7 @@ public class GUI implements ActionListener {
   private JFrame frame = new JFrame();
   private JTextField ipField = new JTextField(15);
   private JTextField portField = new JTextField(5);
-  private JTextArea chatArea = new JTextArea(1, 80);
+  private JTextArea chatArea = new JTextArea(1, 20);
   private JTextField inputField;
 
   public GUI(Node node) {
@@ -29,13 +20,15 @@ public class GUI implements ActionListener {
     panel.setBorder(BorderFactory.createEmptyBorder(30, 30, 10, 30));
     panel.setLayout(null);
 
-    JPanel chatPanel = new JPanel();
-    chatPanel.setBounds(6, 6, 614, 525);
-    chatPanel.setLayout(null);
     chatArea.setBounds(0, 0, 614, 522);
     chatArea.setEditable(false);
-    chatPanel.add(chatArea);
-    panel.add(chatPanel);
+
+    JScrollPane scrollPane = new JScrollPane(chatArea);
+    scrollPane.setBounds(6, 6, 614, 525);
+    panel.add(scrollPane);
+
+    DefaultCaret caret = (DefaultCaret) chatArea.getCaret();
+    caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
 
     frame.getContentPane().add(panel, BorderLayout.CENTER);
     JButton connectButton = new JButton("Connect");
@@ -75,8 +68,6 @@ public class GUI implements ActionListener {
     frame.setTitle("telegram");
     frame.setSize(800, 600);
     frame.setVisible(true);
-
-    //this.node.run();
   }
 
   // process the button clicks
@@ -84,6 +75,8 @@ public class GUI implements ActionListener {
     switch (e.getActionCommand()) {
       case "Send":
         this.node.generateMessage(inputField.getText());
+        chatArea.append(this.node.getName() + ": " + inputField.getText() + '\n');
+        inputField.setText("");
         break;
       case "Connect":
         this.node.connect(ipField.getText(),

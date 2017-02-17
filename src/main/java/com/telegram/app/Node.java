@@ -24,6 +24,10 @@ public class Node implements Runnable {
     }
   }
 
+  public String getName() {
+    return name;
+  }
+
   public void run() {
     while (thread != null) {
       try {
@@ -64,7 +68,7 @@ public class Node implements Runnable {
     } catch (IOException ioe) {
       System.out.println(ioe.getMessage());
     }
-    System.out.println("Node started: " + serve);
+    System.out.println("Node started: " + socket);
   }
 
   public void receiveMessage(int id, Message message) {
@@ -80,7 +84,6 @@ public class Node implements Runnable {
 
   public void generateMessage(String input) {
     Message newMessage = new Message(name, input, "chat");
-    System.out.println(newMessage.timestamp + " :  " + newMessage.author + ":  " + newMessage.messageContent);
     int i = 0;
     while (i < connectionCount) {
       connections[i++].sendMessage(newMessage);
