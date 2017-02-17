@@ -8,14 +8,14 @@ public class Node implements Runnable {
   private ServerSocket      serve;
   private Thread            thread;
   private String            name;
-  private NodeThread        connections[] = new NodeThread[20];
+  private NodeThread[]      connections = new NodeThread[20];
   private DataInputStream   messageIn  =  null;
   private DataOutputStream  messageOut = null;
   private int               connectionCount = 0;
 
 
   public Node(int port) {
-    this.name = "Nick";
+    this.name = "Cherie";
     try {
       this.serve = new ServerSocket(port);
       start();
@@ -72,8 +72,9 @@ public class Node implements Runnable {
     int i = 0;
     while (i < connectionCount) {
       if (connections[i].id != id) {
-        connections[i++].sendMessage(message);
+        connections[i].sendMessage(message);
       }
+      i++;
     }
   }
 

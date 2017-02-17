@@ -76,7 +76,7 @@ public class GUI implements ActionListener {
     frame.setSize(800, 600);
     frame.setVisible(true);
 
-    this.node.run();
+    //this.node.run();
   }
 
   // process the button clicks
