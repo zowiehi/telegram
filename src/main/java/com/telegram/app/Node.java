@@ -69,6 +69,12 @@ public class Node implements Runnable {
 
   public void receiveMessage(int id, Message message) {
     System.out.println(message.timestamp + " :  " + message.author + ":  " + message.messageContent);
+    int i = 0;
+    while (i < connectionCount) {
+      if (connections[i].id != id) {
+        connections[i++].sendMessage(message);
+      }
+    }
   }
 
   public void generateMessage(String input) {
