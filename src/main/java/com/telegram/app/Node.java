@@ -72,7 +72,7 @@ public class Node implements Runnable {
   }
 
   public void generateMessage(String input) {
-    Message newMessage = new Message(name, input);
+    Message newMessage = new Message(name, input, "chat");
     System.out.println(newMessage.timestamp + " :  " + newMessage.author + ":  " + newMessage.messageContent);
     int i = 0;
     while (i < connectionCount) {

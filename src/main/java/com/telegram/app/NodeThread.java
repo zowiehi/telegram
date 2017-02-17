@@ -39,7 +39,7 @@ public class NodeThread extends Thread {
 
   public void sendMessage(Message msg) {
     char filler = '\u25CE';
-    String message = String.join(Character.toString(filler), msg.author, (msg.timestamp).toString(), msg.messageContent);
+    String message = String.join(Character.toString(filler), msg.author, (msg.timestamp).toString(), msg.messageContent, msg.type);
     try {
       this.messageOut.writeUTF(message);
     } catch (IOException ioe) {
@@ -49,7 +49,7 @@ public class NodeThread extends Thread {
 
   private Message parseMessage(String msg) {
     String[] split = msg.split("[\u25CE]");
-    Message message = new Message(split[0], split[2]);
+    Message message = new Message(split[0], split[2], split[3]);
     return message;
   }
 
