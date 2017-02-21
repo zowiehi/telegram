@@ -19,6 +19,10 @@ public class NodeThread extends Thread {
     System.out.println("Thread started");
   }
 
+  public Socket getSocket(){
+    return socket;
+  }
+
   public void run() {
     while (true) {
       try {
