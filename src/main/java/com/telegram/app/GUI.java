@@ -100,7 +100,15 @@ public class GUI implements ActionListener {
   }
 
   public void messageReceived(Message message) {
-    chatArea.append(message.author + ": " + message.messageContent + '\n');
+    switch (message.type) {
+      case "chat":
+        chatArea.append(message.author + ": " + message.messageContent + '\n');
+        break;
+      case "err":
+      case "connected":
+        chatArea.append(message.messageContent + '\n');
+        break;
+    }
   }
 
   // process the button clicks

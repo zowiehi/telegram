@@ -26,7 +26,7 @@ public class NodeThread extends Thread {
         Message message = parseMessage(msgText);
         this.node.receiveMessage(id, message);
       } catch (IOException ioe) {
-        System.out.println(ioe.getMessage());
+        this.node.listener.messageReceived(new Message(null, "Error: " + ioe.getMessage(), "err"));
       }
     }
   }
@@ -43,7 +43,7 @@ public class NodeThread extends Thread {
     try {
       this.messageOut.writeUTF(message);
     } catch (IOException ioe) {
-      System.out.println(ioe.getMessage());
+      this.node.listener.messageReceived(new Message(null, "Error: " + ioe.getMessage(), "err"));
     }
   }
 

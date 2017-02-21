@@ -56,12 +56,12 @@ public class Node implements Runnable {
     try {
       Socket socket = new Socket(addr, port);
       newThread(socket);
+      this.listener.messageReceived(new Message(null, "Connected to " + addr + ":"+ port, "connected"));
     } catch (UnknownHostException uhe) {
-      System.out.println(uhe.getMessage());
+      this.listener.messageReceived(new Message(null, "Unable to connect to: " + uhe.getMessage(), "err"));
     } catch (IOException ioe) {
-      System.out.println(ioe.getMessage());
+      this.listener.messageReceived(new Message(null, "Error: " + ioe.getMessage(), "err"));
     }
-    System.out.println("Connected to " + addr + ":"+ port);
   }
 
   public void newThread(Socket socket) {
@@ -71,7 +71,7 @@ public class Node implements Runnable {
       connections[connectionCount].start();
       connectionCount++;
     } catch (IOException ioe) {
-      System.out.println(ioe.getMessage());
+      this.listener.messageReceived(new Message(null, "Error: " + ioe.getMessage(), "err"));
     }
     System.out.println("Node started: " + socket);
   }
