@@ -96,7 +96,19 @@ public class Node implements Runnable {
   }
 
   private void leave() {
-    // leaves the chat network
+    // getting the replacement node socket info
+    NodeThread replacement = connections[0];
+    Socket replacementSocket = replacement.getSocket();
+    int replacementPort = replacementSocket.getPort();
+    InetAddress replacementAddress = replacementSocket.getInetAddress();
+
+    // creating message to send to connected nodes to know who to connect to
+    String mess = replacementAddress.toString() + Integer.toString(replacementPort);
+    Message leaveMessage = new Message(name, mess, "leave");
+    int i = 0;
+    while (i < connectionCount){
+      connections[i++].sendMessage(leaveMessage);
+    }
   }
 
 }
