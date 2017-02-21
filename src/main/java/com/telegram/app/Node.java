@@ -12,16 +12,21 @@ public class Node implements Runnable {
   private DataInputStream   messageIn  =  null;
   private DataOutputStream  messageOut = null;
   private int               connectionCount = 0;
+  public GUI                listener;
 
 
   public Node(int port) {
-    this.name = "Cherie";
+    this.name = "Anonymous";
     try {
       this.serve = new ServerSocket(port);
       start();
     } catch (IOException ioe) {
       System.out.println(ioe.getMessage());
     }
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public String getName() {
@@ -72,7 +77,7 @@ public class Node implements Runnable {
   }
 
   public void receiveMessage(int id, Message message) {
-    System.out.println(message.timestamp + " :  " + message.author + ":  " + message.messageContent);
+    this.listener.messageReceived(message);
     int i = 0;
     while (i < connectionCount) {
       if (connections[i].id != id) {
