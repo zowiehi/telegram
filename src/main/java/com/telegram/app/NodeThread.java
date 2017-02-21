@@ -28,7 +28,6 @@ public class NodeThread extends Thread {
       try {
         String msgText = messageIn.readUTF();
         Message message = parseMessage(msgText);
-        this.node.receiveMessage(id, message);
       } catch (IOException ioe) {
         this.node.listener.messageReceived(new Message(null, "Error: " + ioe.getMessage(), "err"));
       }
@@ -56,6 +55,7 @@ public class NodeThread extends Thread {
     Message message = null;
     switch(split[0]){
       case "chat": message = new Message(split[1], split[2], split[3]);
+                   this.node.receiveMessage(id, message);
                    break;
       case "leave": Swap(id, split[1], split[2]);
                    break;

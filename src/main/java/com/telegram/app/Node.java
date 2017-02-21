@@ -89,6 +89,8 @@ public class Node implements Runnable {
 
   public void generateMessage(String input) {
     if(input.contains("/bye")){
+      leave();
+      return;
     }
     Message newMessage = new Message(name, input, "chat");
     int i = 0;
