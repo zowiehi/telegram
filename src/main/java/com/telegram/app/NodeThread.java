@@ -64,7 +64,7 @@ public class NodeThread extends Thread {
                    this.node.receiveMessage(id, message);
                    break;
       case "leave": this.node.swap(id, split[3], split[4]);
-                   break;
+                    break;
     }
 
     return message;

@@ -14,12 +14,14 @@ public class Node implements Runnable {
   private DataOutputStream  messageOut = null;
   private int               connectionCount = 0;
   public GUI                listener;
+  public InetAddress        localAddr;
 
 
   public Node(int port) {
     this.name = "Anonymous";
     try {
       this.serve = new ServerSocket(port);
+      this.localAddr = this.serve.getInetAddress();
       start();
     } catch (IOException ioe) {
       System.out.println(ioe.getMessage());
@@ -82,7 +84,7 @@ public class Node implements Runnable {
     this.listener.messageReceived(message);
     int i = 0;
     while (i < connectionCount) {
-      if (connections[i].id != id) {
+      if (connections[i].id != id && connections[i] != null) {
         connections[i].sendMessage(message);
       }
       i++;
@@ -98,7 +100,7 @@ public class Node implements Runnable {
       Message newMessage = new Message(name, input, "chat");
       int i = 0;
       while (i < connectionCount) {
-        connections[i++].sendMessage(newMessage);
+        if(connections[i] != null) connections[i++].sendMessage(newMessage);
       }
       return newMessage;
     }
@@ -107,15 +109,17 @@ public class Node implements Runnable {
   public void swap(int id, String addr, String port){
     connections[id].stopit();
     connections[id] = null;
-    try{
-      Socket socket = new Socket(addr, Integer.parseInt(port));
-      connections[id] = new NodeThread(this, socket, id);
-      connections[id].open();
-      connections[id].start();
-    } catch (UnknownHostException uhe) {
-      this.listener.messageReceived(new Message(null, "Unable to connect to: " + uhe.getMessage(), "err"));
-    } catch (IOException ioe) {
-      this.listener.messageReceived(new Message(null, "Error: " + ioe.getMessage(), "err"));
+    if(!this.localAddr.toString().equals(addr)){
+      try{
+        Socket socket = new Socket(addr, Integer.parseInt(port));
+        connections[id] = new NodeThread(this, socket, id);
+        connections[id].open();
+        connections[id].start();
+      } catch (UnknownHostException uhe) {
+        this.listener.messageReceived(new Message(null, "Unable to connect to: " + uhe.getMessage(), "err"));
+      } catch (IOException ioe) {
+        this.listener.messageReceived(new Message(null, "Error: " + ioe.getMessage(), "err"));
+      }
     }
   }
 
@@ -129,8 +133,8 @@ public class Node implements Runnable {
     // creating message to send to connected nodes to know who to connect to
     String mess = replacementAddress.toString() + Character.toString('\u25CE') + Integer.toString(replacementPort);
     Message leaveMessage = new Message(name, mess, "leave");
-    int i = 0;
-    while (i <= connectionCount){
+    int i = 1;
+    while (i < connectionCount){
       connections[i].sendMessage(leaveMessage);
       connections[i].stopit();
       connections[i++] = null;
