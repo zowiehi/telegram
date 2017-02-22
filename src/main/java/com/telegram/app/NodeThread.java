@@ -54,7 +54,7 @@ public class NodeThread extends Thread {
     String[] split = msg.split("[\u25CE]");
     Message message = null;
     switch(split[0]){
-      case "chat": message = new Message(split[1], split[2], split[3]);
+      case "chat": message = new Message(split[1], split[3], split[0]);
                    this.node.receiveMessage(id, message);
                    break;
       case "leave": this.node.swap(id, split[1], split[2]);

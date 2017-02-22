@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.text.DefaultCaret;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class GUI implements ActionListener {
   private Node node;
@@ -13,6 +15,7 @@ public class GUI implements ActionListener {
   private JTextArea chatArea = new JTextArea(1, 20);
   private JTextField inputField;
   private JTextField textField;
+  private SimpleDateFormat df = new SimpleDateFormat("hh:mm:ss");
 
   public GUI(Node node) {
     this.node = node;
@@ -102,7 +105,7 @@ public class GUI implements ActionListener {
   public void messageReceived(Message message) {
     switch (message.type) {
       case "chat":
-        chatArea.append(message.author + ": " + message.messageContent + '\n');
+        chatArea.append(df.format(message.timestamp) + "     " + message.author + ": " + message.messageContent + '\n');
         break;
       case "err":
       case "connected":
@@ -119,8 +122,8 @@ public class GUI implements ActionListener {
     switch (e.getActionCommand()) {
       case "Send":
         if (inputField.getText() != null && !inputField.getText().isEmpty()) {
-          this.node.generateMessage(inputField.getText());
-          chatArea.append(this.node.getName() + ": " + inputField.getText() + '\n');
+          Message msg = this.node.generateMessage(inputField.getText());
+          chatArea.append(df.format(msg.timestamp) + "     " + msg.author + ": " + msg.messageContent + '\n');
           inputField.setText("");
         }
         break;
