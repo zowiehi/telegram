@@ -116,7 +116,7 @@ public class Node implements Runnable {
     InetAddress replacementAddress = replacementSocket.getInetAddress();
 
     // creating message to send to connected nodes to know who to connect to
-    String mess = replacementAddress.toString() + Integer.toString(replacementPort);
+    String mess = replacementAddress.toString() + Character.toString('\u25CE') + Integer.toString(replacementPort);
     Message leaveMessage = new Message(name, mess, "leave");
     int i = 0;
     while (i < connectionCount){
