@@ -83,7 +83,7 @@ public class Node implements Runnable {
     this.listener.messageReceived(message);
     int i = 0;
     while (i < connectionCount) {
-      if (connections[i].id != id && connections[i] != null) {
+      if (connections[i].id != id) {
         connections[i].sendMessage(message);
       }
       i++;
@@ -99,7 +99,10 @@ public class Node implements Runnable {
       Message newMessage = new Message(name, input, "chat");
       int i = 0;
       while (i < connectionCount) {
-        if(connections[i] != null) connections[i++].sendMessage(newMessage);
+        if (connections[i] != null) {
+          connections[i].sendMessage(newMessage);
+        }
+        i++;
       }
       return newMessage;
     }
@@ -108,17 +111,17 @@ public class Node implements Runnable {
   public void swap(int id, String addr, String port){
     connections[id].stopit();
     connections[id] = null;
-    if(!this.localAddr.toString().equals(addr)){
-      try{
-        Socket socket = new Socket(addr, Integer.parseInt(port));
-        connections[id] = new NodeThread(this, socket, id);
-        connections[id].open();
-        connections[id].start();
-      } catch (UnknownHostException uhe) {
-        this.listener.messageReceived(new Message(null, "Unable to connect to: " + uhe.getMessage(), "err"));
-      } catch (IOException ioe) {
-        this.listener.messageReceived(new Message(null, "Error: " + ioe.getMessage(), "err"));
+    try {
+      if(!this.localAddr.getLocalHost().getHostAddress().equals(addr)) {
+          Socket socket = new Socket(addr, Integer.parseInt(port));
+          connections[id] = new NodeThread(this, socket, id);
+          connections[id].open();
+          connections[id].start();
       }
+    } catch (UnknownHostException uhe) {
+      this.listener.messageReceived(new Message(null, "Unable to connect to: " + uhe.getMessage(), "err"));
+    } catch (IOException ioe) {
+      this.listener.messageReceived(new Message(null, "Error: " + ioe.getMessage(), "err"));
     }
   }
 
@@ -128,11 +131,10 @@ public class Node implements Runnable {
     Socket replacementSocket = replacement.getSocket();
     int replacementPort = replacementSocket.getPort();
     String replacementAddress = replacementSocket.getInetAddress().getHostAddress();
-
     // creating message to send to connected nodes to know who to connect to
     String mess = replacementAddress + Character.toString('\u25CE') + Integer.toString(replacementPort);
     Message leaveMessage = new Message(name, mess, "leave");
-    int i = 1;
+    int i = 0;
     while (i < connectionCount){
       connections[i].sendMessage(leaveMessage);
       connections[i].stopit();
