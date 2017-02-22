@@ -119,7 +119,7 @@ public class Node implements Runnable {
     }
   }
 
-  private void leave() {
+  public void leave() {
     // getting the replacement node socket info
     NodeThread replacement = connections[0];
     Socket replacementSocket = replacement.getSocket();
