@@ -80,7 +80,6 @@ public class Node implements Runnable {
   }
 
   public void receiveMessage(int id, Message message) {
-    System.out.println(message.messageContent);
     this.listener.messageReceived(message);
     int i = 0;
     while (i < connectionCount) {
@@ -128,10 +127,10 @@ public class Node implements Runnable {
     NodeThread replacement = connections[0];
     Socket replacementSocket = replacement.getSocket();
     int replacementPort = replacementSocket.getPort();
-    InetAddress replacementAddress = replacementSocket.getInetAddress();
+    String replacementAddress = replacementSocket.getInetAddress().getHostAddress();
 
     // creating message to send to connected nodes to know who to connect to
-    String mess = replacementAddress.toString() + Character.toString('\u25CE') + Integer.toString(replacementPort);
+    String mess = replacementAddress + Character.toString('\u25CE') + Integer.toString(replacementPort);
     Message leaveMessage = new Message(name, mess, "leave");
     int i = 1;
     while (i < connectionCount){
