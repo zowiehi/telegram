@@ -88,11 +88,22 @@ public class Node implements Runnable {
   }
 
   public void generateMessage(String input) {
-    Message newMessage = new Message(name, input, "chat");
-    int i = 0;
-    while (i < connectionCount) {
-      connections[i++].sendMessage(newMessage);
+    if(input.contains("/bye")){
+      leave();
     }
+    else{
+      Message newMessage = new Message(name, input, "chat");
+      int i = 0;
+      while (i < connectionCount) {
+        connections[i++].sendMessage(newMessage);
+      }
+    }
+  }
+
+  public void swap(int id, String addr, String port){
+    connections[id] = null;
+    connectionCount -= 1;
+    connect(addr, Integer.parseInt(port));
   }
 
   private void leave() {

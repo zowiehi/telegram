@@ -28,7 +28,6 @@ public class NodeThread extends Thread {
       try {
         String msgText = messageIn.readUTF();
         Message message = parseMessage(msgText);
-        this.node.receiveMessage(id, message);
       } catch (IOException ioe) {
         this.node.listener.messageReceived(new Message(null, "Error: " + ioe.getMessage(), "err"));
       }
@@ -43,7 +42,7 @@ public class NodeThread extends Thread {
 
   public void sendMessage(Message msg) {
     char filler = '\u25CE';
-    String message = String.join(Character.toString(filler), msg.author, (msg.timestamp).toString(), msg.messageContent, msg.type);
+    String message = String.join(Character.toString(filler), msg.type, msg.author, (msg.timestamp).toString(), msg.messageContent);
     try {
       this.messageOut.writeUTF(message);
     } catch (IOException ioe) {
@@ -53,7 +52,15 @@ public class NodeThread extends Thread {
 
   private Message parseMessage(String msg) {
     String[] split = msg.split("[\u25CE]");
-    Message message = new Message(split[0], split[2], split[3]);
+    Message message = null;
+    switch(split[0]){
+      case "chat": message = new Message(split[1], split[2], split[3]);
+                   this.node.receiveMessage(id, message);
+                   break;
+      case "leave": this.node.swap(id, split[1], split[2]);
+                   break;
+    }
+
     return message;
   }
 
