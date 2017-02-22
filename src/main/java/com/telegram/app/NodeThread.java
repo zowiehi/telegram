@@ -10,12 +10,14 @@ public class NodeThread extends Thread {
   private Node node;
   private Socket socket;
   public int id;
+  private Boolean running;
 
 
   public NodeThread(Node node, Socket socket, int id) {
     this.node = node;
     this.socket = socket;
     this.id = id;
+    this.running = true;
     System.out.println("Thread started");
   }
 
@@ -23,8 +25,12 @@ public class NodeThread extends Thread {
     return socket;
   }
 
+  public void stopit(){
+    this.running = false;
+  }
+
   public void run() {
-    while (true) {
+    while (running) {
       try {
         String msgText = messageIn.readUTF();
         Message message = parseMessage(msgText);
