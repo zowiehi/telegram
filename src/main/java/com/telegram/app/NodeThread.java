@@ -57,7 +57,7 @@ public class NodeThread extends Thread {
       case "chat": message = new Message(split[1], split[2], split[3]);
                    this.node.receiveMessage(id, message);
                    break;
-      case "leave": Swap(id, split[1], split[2]);
+      case "leave": this.node.swap(id, split[1], split[2]);
                    break;
     }
 

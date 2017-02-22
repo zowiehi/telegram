@@ -90,20 +90,20 @@ public class Node implements Runnable {
   public void generateMessage(String input) {
     if(input.contains("/bye")){
       leave();
-      return;
     }
-    Message newMessage = new Message(name, input, "chat");
-    int i = 0;
-    while (i < connectionCount) {
-      connections[i++].sendMessage(newMessage);
+    else{
+      Message newMessage = new Message(name, input, "chat");
+      int i = 0;
+      while (i < connectionCount) {
+        connections[i++].sendMessage(newMessage);
+      }
     }
   }
 
   public void swap(int id, String addr, String port){
-    socket socket = new socket(addr, port);
     connections[id] = null;
     connectionCount -= 1;
-    newThread(socket);
+    connect(addr, Integer.parseInt(port));
   }
 
   private void leave() {
