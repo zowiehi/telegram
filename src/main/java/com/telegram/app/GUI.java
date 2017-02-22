@@ -87,7 +87,7 @@ public class GUI implements ActionListener {
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.addWindowListener(new WindowListener() {
       @Override public void windowClosing(WindowEvent e) {
-        // TODO:this is the app closing hook
+        this.node.leave();
       }
 
       @Override public void windowOpened(WindowEvent e) {}
@@ -123,7 +123,9 @@ public class GUI implements ActionListener {
       case "Send":
         if (inputField.getText() != null && !inputField.getText().isEmpty()) {
           Message msg = this.node.generateMessage(inputField.getText());
-          chatArea.append(df.format(msg.timestamp) + "     " + msg.author + ": " + msg.messageContent + '\n');
+          if (msg != null) {
+            chatArea.append(df.format(msg.timestamp) + "     " + msg.author + ": " + msg.messageContent + '\n');
+          }
           inputField.setText("");
         }
         break;

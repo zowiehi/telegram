@@ -78,6 +78,7 @@ public class Node implements Runnable {
   }
 
   public void receiveMessage(int id, Message message) {
+    System.out.println(message.messageContent);
     this.listener.messageReceived(message);
     int i = 0;
     while (i < connectionCount) {
