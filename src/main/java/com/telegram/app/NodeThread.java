@@ -4,58 +4,70 @@ import java.net.*;
 import java.io.*;
 
 
-public class NodeThread extends Thread
-{
+public class NodeThread extends Thread {
   private DataInputStream  messageIn  =  null;
   private DataOutputStream messageOut = null;
   private Node node;
   private Socket socket;
   public int id;
+  private Boolean running;
 
 
-  public NodeThread(Node node, Socket socket, int id){
+  public NodeThread(Node node, Socket socket, int id) {
     this.node = node;
     this.socket = socket;
     this.id = id;
+    this.running = true;
+    System.out.println("Thread started");
   }
 
-  public void run(){
-    while(true){
-      try{
-      String msgText = messageIn.readUTF();
-      Message message = parseMessage(msgText);
-      node.receiveMessage(id, message);
-    }
-    catch(IOException ioe)
-      {
-        System.out.println(ioe.getMessage());
+  public Socket getSocket(){
+    return socket;
+  }
+
+  public void stopit(){
+    this.running = false;
+  }
+
+  public void run() {
+    while (running) {
+      try {
+        String msgText = messageIn.readUTF();
+        Message message = parseMessage(msgText);
+      } catch (IOException ioe) {
+        this.node.listener.messageReceived(new Message(null, "Error: " + ioe.getMessage(), "err"));
       }
     }
   }
 
   public void open() throws IOException {
-    messageIn = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-    messageOut = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-}
-
-
-  public void sendMessage(Message msg){
-    char filler = '\u25CE';
-    String message = String.join(msg.author, Character.toString(filler), (msg.timestamp).toString(), Character.toString(filler), msg.messageContent);
-    try{
-      messageOut.writeUTF(message);
-    }
-    catch(IOException ioe)
-      {
-        System.out.println(ioe.getMessage());
-      }
+    this.messageIn = new DataInputStream(this.socket.getInputStream());
+    this.messageOut = new DataOutputStream(this.socket.getOutputStream());
   }
 
-  private Message parseMessage(String msg){
-    String[] split = msg.split("[\u25CE]");
-    Message message = new Message(split[0], split[2]);
-    return message;
 
+  public void sendMessage(Message msg) {
+    char filler = '\u25CE';
+    String message = String.join(Character.toString(filler), msg.type, msg.author, (msg.timestamp).toString(), msg.messageContent);
+    try {
+      this.messageOut.writeUTF(message);
+    } catch (IOException ioe) {
+      this.node.listener.messageReceived(new Message(null, "Error: " + ioe.getMessage(), "err"));
+    }
+  }
+
+  private Message parseMessage(String msg) {
+    String[] split = msg.split("[\u25CE]");
+    Message message = null;
+    switch(split[0]){
+      case "chat": message = new Message(split[1], split[3], split[0]);
+                   this.node.receiveMessage(id, message);
+                   break;
+      case "leave": this.node.swap(id, split[3], split[4]);
+                   break;
+    }
+
+    return message;
   }
 
 }

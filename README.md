@@ -12,10 +12,12 @@ To package into a `.jar`
 $ mvn package
 ```
 
-To run the `.jar`
+To run the `.jar` through the command line
 ```bash
-$ java -cp target/telegram-1.0-SNAPSHOT.jar com.telegram.app.App
+$ java -jar target/telegram-1.0-SNAPSHOT.jar
 ```
+
+Instead of using the command line, you can now just double-click on the `target/telegram-1.0-SNAPSHOT.jar` file.
 
 ---
 

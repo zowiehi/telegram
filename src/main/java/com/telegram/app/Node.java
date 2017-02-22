@@ -3,93 +3,138 @@ package com.telegram.app;
 import java.net.*;
 import java.io.*;
 
-public class Node implements Runnable{
 
-  private ServerSocket  serve;
-  private Thread        thread;
-  private String        name;
-  private NodeThread    connections[] = new NodeThread[20];
-  private DataInputStream  messageIn  =  null;
-  private DataOutputStream messageOut = null;
-  private int           connectionCount = 0;
+public class Node implements Runnable {
+
+  private ServerSocket      serve;
+  private Thread            thread;
+  private String            name;
+  private NodeThread[]      connections = new NodeThread[20];
+  private DataInputStream   messageIn  =  null;
+  private DataOutputStream  messageOut = null;
+  private int               connectionCount = 0;
+  public GUI                listener;
 
 
-  public Node(int port){
-    this.name = "Nick";
+  public Node(int port) {
+    this.name = "Anonymous";
     try {
-      serve = new ServerSocket(port);
+      this.serve = new ServerSocket(port);
       start();
-      System.out.println("Node started: " + serve);
+    } catch (IOException ioe) {
+      System.out.println(ioe.getMessage());
     }
-    catch(IOException ioe)
-      {  System.out.println(ioe.getMessage());
-      }
   }
 
-  public void run(){
-    while(thread != null){
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void run() {
+    while (thread != null) {
       try {
-      Socket socket = serve.accept();
-      newThread(socket);
+        Socket socket = serve.accept();
+        newThread(socket);
+      } catch (IOException ioe) {
+        System.out.println(ioe.getMessage());
       }
-      catch(IOException ioe)
-        {  System.out.println(ioe.getMessage());
-        }
     }
-    return;
   }
 
-  public void start(){
-    if(thread == null){
+  public void start() {
+    if (thread == null) {
       thread = new Thread(this);
       thread.start();
+      System.out.println("Node started: " + serve);
     }
   }
 
-  public void connect(String addr, int port){
-    try{
-      Socket sock = new Socket(addr, port);
+  public void connect(String addr, int port) {
+    try {
+      Socket socket = new Socket(addr, port);
+      newThread(socket);
+      this.listener.messageReceived(new Message(null, "Connected to " + addr + ":"+ port, "connected"));
+    } catch (UnknownHostException uhe) {
+      this.listener.messageReceived(new Message(null, "Unable to connect to: " + uhe.getMessage(), "err"));
+    } catch (IOException ioe) {
+      this.listener.messageReceived(new Message(null, "Error: " + ioe.getMessage(), "err"));
     }
-    catch(UnknownHostException uhe){
-      System.out.println(uhe.getMessage());
-    }
-    catch(IOException ioe)
-      {
-        System.out.println(ioe.getMessage());
-      }
-    return;
-
   }
 
-  public void newThread(Socket socket){
+  public void newThread(Socket socket) {
     connections[connectionCount] = new NodeThread(this, socket, connectionCount);
-    try{
+    try {
       connections[connectionCount].open();
-      connections[connectionCount].run();
+      connections[connectionCount].start();
+      connectionCount++;
+    } catch (IOException ioe) {
+      this.listener.messageReceived(new Message(null, "Error: " + ioe.getMessage(), "err"));
     }
-    catch(IOException ioe)
-      {
-        System.out.println(ioe.getMessage());
+    System.out.println("Node started: " + socket);
+  }
+
+  public void receiveMessage(int id, Message message) {
+    System.out.println(message.messageContent);
+    this.listener.messageReceived(message);
+    int i = 0;
+    while (i < connectionCount) {
+      if (connections[i].id != id) {
+        connections[i].sendMessage(message);
       }
-    connectionCount++;
+      i++;
+    }
   }
 
-  public void receiveMessage(int id, Message message){
-    System.out.println( message.timestamp + " :  " + message.author + ":  " + message.messageContent);
-    return;
-  }
-
-  public void generateMessage(String input){
-      Message newMessage = new Message(name, input);
+  public Message generateMessage(String input) {
+    if(input.contains("/bye")){
+      leave();
+      return null;
+    }
+    else{
+      Message newMessage = new Message(name, input, "chat");
       int i = 0;
-      while(i <= connectionCount){
-        connections[i].sendMessage(newMessage);
+      while (i < connectionCount) {
+        connections[i++].sendMessage(newMessage);
       }
-      return;
+      return newMessage;
+    }
   }
 
-  private void leave(){
-    // leaves the chat network
+  public void swap(int id, String addr, String port){
+    connections[id].stopit();
+    connections[id] = null;
+    try{
+      Socket socket = new Socket(addr, Integer.parseInt(port));
+      connections[id] = new NodeThread(this, socket, id);
+      connections[id].open();
+      connections[id].start();
+    } catch (UnknownHostException uhe) {
+      this.listener.messageReceived(new Message(null, "Unable to connect to: " + uhe.getMessage(), "err"));
+    } catch (IOException ioe) {
+      this.listener.messageReceived(new Message(null, "Error: " + ioe.getMessage(), "err"));
+    }
+  }
+
+  private void leave() {
+    // getting the replacement node socket info
+    NodeThread replacement = connections[0];
+    Socket replacementSocket = replacement.getSocket();
+    int replacementPort = replacementSocket.getPort();
+    InetAddress replacementAddress = replacementSocket.getInetAddress();
+
+    // creating message to send to connected nodes to know who to connect to
+    String mess = replacementAddress.toString() + Character.toString('\u25CE') + Integer.toString(replacementPort);
+    Message leaveMessage = new Message(name, mess, "leave");
+    int i = 0;
+    while (i <= connectionCount){
+      connections[i].sendMessage(leaveMessage);
+      connections[i].stopit();
+      connections[i++] = null;
+    }
   }
 
 }
