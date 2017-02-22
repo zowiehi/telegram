@@ -87,7 +87,7 @@ public class GUI implements ActionListener {
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.addWindowListener(new WindowListener() {
       @Override public void windowClosing(WindowEvent e) {
-        this.node.leave();
+        node.leave();
       }
 
       @Override public void windowOpened(WindowEvent e) {}
