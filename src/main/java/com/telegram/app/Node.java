@@ -87,9 +87,10 @@ public class Node implements Runnable {
     }
   }
 
-  public void generateMessage(String input) {
+  public Message generateMessage(String input) {
     if(input.contains("/bye")){
       leave();
+      return null;
     }
     else{
       Message newMessage = new Message(name, input, "chat");
@@ -97,6 +98,7 @@ public class Node implements Runnable {
       while (i < connectionCount) {
         connections[i++].sendMessage(newMessage);
       }
+      return newMessage;
     }
   }
 
