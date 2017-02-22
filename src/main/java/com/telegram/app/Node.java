@@ -104,7 +104,7 @@ public class Node implements Runnable {
   }
 
   public void swap(int id, String addr, String port){
-    connections[id].stop();
+    connections[id].stopit();
     connections[id] = null;
     try{
       Socket socket = new Socket(addr, Integer.parseInt(port));
@@ -129,9 +129,9 @@ public class Node implements Runnable {
     String mess = replacementAddress.toString() + Character.toString('\u25CE') + Integer.toString(replacementPort);
     Message leaveMessage = new Message(name, mess, "leave");
     int i = 0;
-    while (i < connectionCount){
+    while (i <= connectionCount){
       connections[i].sendMessage(leaveMessage);
-      connections[i].stop();
+      connections[i].stopit();
       connections[i++] = null;
     }
   }
