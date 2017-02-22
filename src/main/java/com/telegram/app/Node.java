@@ -3,6 +3,8 @@ package com.telegram.app;
 import java.net.*;
 import java.io.*;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 public class Node implements Runnable {
 
   private ServerSocket      serve;
@@ -104,8 +106,10 @@ public class Node implements Runnable {
 
   public void swap(int id, String addr, String port){
     connections[id] = null;
-    connectionCount -= 1;
-    connect(addr, Integer.parseInt(port));
+    Socket socket = new Socket(addr, Integer.parseInt(port));
+    connections[id] = new NodeThread(this, socket, id);
+    connections[id].open();
+    connections[id].start();
   }
 
   private void leave() {
